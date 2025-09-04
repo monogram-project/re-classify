@@ -15,18 +15,18 @@ output is generated.
 
 ### From Release (Recommended)
 
-Download the latest release for your platform from the [GitHub Releases page](https://github.com/sfkleach/re-classify/releases).
+Download the latest release for your platform from the [GitHub Releases page](https://github.com/monogram-project/re-classify/releases).
 
 ### From Source
 
 The easiest way to install from source is via the `go install` command:
 ```bash
-go install github.com/sfkleach/re-classify/cmd/re-classify@latest
+go install github.com/monogram-project/re-classify/cmd/re-classify@latest
 ```
 
 Alternatively, you can clone and build locally:
 ```bash
-git clone https://github.com/sfkleach/re-classify.git
+git clone https://github.com/monogram-project/re-classify.git
 cd re-classify
 just install
 ```
@@ -35,10 +35,10 @@ just install
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/sfkleach/re-classify:latest
+docker pull ghcr.io/monogram-project/re-classify:latest
 
 # Run with a config file
-docker run --rm -i ghcr.io/sfkleach/re-classify:latest ./test-configs/example-config.yaml < input.txt
+docker run --rm -i ghcr.io/monogram-project/re-classify:latest ./test-configs/example-config.yaml < input.txt
 ```
 
 ## Building
