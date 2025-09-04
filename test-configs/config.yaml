@@ -1,0 +1,8 @@
+surround-regexp:
+  - start: if
+    endings: [fi]
+  - start: while
+    endings: [done]
+
+simple-label-regexp:
+  - do

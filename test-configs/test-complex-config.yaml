@@ -1,0 +1,20 @@
+# Complex test configuration with regex patterns
+
+surround-regexp:
+  - start: "if|while|for"
+    endings: ["end$0", "$0_end"]
+  - start: "begin"
+    endings: ["end"]
+
+form-prefix-regexp:
+  - "test.*"
+
+operator-regexp:
+  - pattern: "="
+    prefix-prec: 0
+    infix-prec: 10
+    postfix-prec: 0
+  - pattern: "\\+"
+    prefix-prec: 5
+    infix-prec: 15
+    postfix-prec: 0
