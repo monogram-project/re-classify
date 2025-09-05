@@ -9,6 +9,14 @@ ldflags := "-ldflags \"-X main.Version=" + version + "\""
 # Show available recipes (default)
 default: help
 
+# Initialize decision records
+init-decisions:
+    python3 scripts/decisions.py --init
+
+# Add a new decision record
+add-decision TOPIC:
+    python3 scripts/decisions.py --add "{{TOPIC}}"
+
 # Build the binary
 build:
     go build {{ldflags}} -o {{binary_name}} {{cmd_dir}}
@@ -20,6 +28,10 @@ install:
 # Run tests
 test:
     go test -v ./...
+
+# Functional tests
+functest:
+    poetry run python functest.py
 
 # Clean build artifacts
 clean:
