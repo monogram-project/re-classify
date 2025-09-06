@@ -83,7 +83,7 @@ jobs:
         "$pipx_bin" install poetry || "$pipx_bin" reinstall poetry
 
     - name: Install Python dependencies
-      run: poetry install
+      run: poetry install --no-root
 
     - name: Install just
       run: |
