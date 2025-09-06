@@ -59,7 +59,7 @@ func (ce *ClassifierEngine) BuildFormStartEndMappings(tokens []string, cfg *conf
 	for i, surroundConfig := range cfg.SurroundRegexp {
 		if len(surroundConfig.Endings) == 0 && surroundConfig.End != "" {
 			inferEndingsTableBuilder.AddPattern(surroundConfig.End, i)
-
+			count += 1
 		}
 	}
 	if count > 0 {
@@ -93,8 +93,8 @@ func (ce *ClassifierEngine) BuildFormStartEndMappings(tokens []string, cfg *conf
 					endTokenTableBuilder.AddPattern(regexp.QuoteMeta(ending), true)
 				} else if hasDollarZero && !hasDollarNonZero {
 					// Split at $0 and QuoteMeta the components then join
-					// using the Start regexp.
-					startPattern := regexp.QuoteMeta(surroundConfig.Start)
+					// using the Start regexp wrapped in a non-capturing group.
+					startPattern := "(?:" + surroundConfig.Start + ")"
 					parts := strings.Split(ending, "$0")
 					for i, part := range parts {
 						parts[i] = regexp.QuoteMeta(part)

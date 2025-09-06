@@ -1,7 +1,7 @@
 tests:
 
   - name: "if EXPR fi"
-    command: "go run ./cmd/re-classify functests/config.yaml"
+    command: "go run ./cmd/re-classify functests/simple-config.yaml"
     input: |
       if
       x
@@ -12,7 +12,7 @@ tests:
       E
 
   - name: "while x: do x -= 1 done"
-    command: "go run ./cmd/re-classify functests/config.yaml"
+    command: "go run ./cmd/re-classify functests/simple-config.yaml"
     input: |
       while 
       x
@@ -30,4 +30,15 @@ tests:
       V
       O 0 100 0
       U
+      E
+
+  - name: "$0 pattern substitution"
+    command: "go run ./cmd/re-classify functests/endings-config.yaml"
+    input: |
+      if
+      endif
+      while_end
+    expected_output: |
+      S endif if_end
+      E
       E
