@@ -77,7 +77,7 @@ type CompiledOperatorConfig struct {
 
 // LoadClassifierConfig loads configuration from a YAML file
 func LoadClassifierConfig(filename string) (*ClassifierConfig, error) {
-	data, err := os.ReadFile(filename)
+	data, err := os.ReadFile(filename) // #nosec G304, this is a CLI application.
 	if err != nil {
 		return nil, fmt.Errorf("failed to read config file %s: %w", filename, err)
 	}
