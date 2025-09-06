@@ -2,7 +2,7 @@ name: Build and Test
 
 # Pin just version for all jobs
 env:
-  JUST_VERSION: '1.40'
+  JUST_VERSION: '1.40.0'
 
 on:
   push:
