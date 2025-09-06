@@ -1,9 +1,5 @@
 name: Build and Test
 
-# Pin just version for all jobs
-env:
-  JUST_VERSION: '1.40.0'
-
 on:
   push:
     branches: [ main ]
@@ -86,29 +82,13 @@ jobs:
         # Install poetry using the discovered pipx
         "$pipx_bin" install poetry || "$pipx_bin" reinstall poetry
 
-    - name: Install just (hardcoded)
+    - name: Install just
       run: |
         if command -v just >/dev/null 2>&1; then
           echo "just already installed at $(command -v just); skipping install"
         else
           mkdir -p "$HOME/.local/bin"
-          ARCH="x86_64"
-          TARBALL="just-${JUST_VERSION}-${ARCH}-unknown-linux-gnu.tar.gz"
-          URL="https://github.com/casey/just/releases/download/${JUST_VERSION}/${TARBALL}"
-
-          echo "Downloading $URL"
-          curl -fsSL "$URL" -o /tmp/just.tar.gz
-          tar -xzf /tmp/just.tar.gz -C /tmp
-
-          # Find the extracted 'just' executable and move it to local bin
-          JUST_BIN=$(find /tmp -maxdepth 3 -type f -name just -perm /111 | head -n1)
-          if [ -z "$JUST_BIN" ]; then
-            echo "ERROR: could not find 'just' in the downloaded archive"
-            exit 1
-          fi
-
-          mv "$JUST_BIN" "$HOME/.local/bin/just"
-          chmod +x "$HOME/.local/bin/just"
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "$HOME/.local/bin"
           echo "$HOME/.local/bin" >> $GITHUB_PATH
         fi
 
