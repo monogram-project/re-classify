@@ -1,0 +1,27 @@
+surround-regexp:
+  - start: if
+    endings: [fi]
+  - start: while
+    endings: [done]
+
+simple-label-regexp:
+  - do
+
+variable-regexp: 
+  - "[a-zA-Z_][\\w_]*"
+
+operator-regexp:
+  - pattern: "="
+    infix-prec: 100
+  - pattern: "\\+="
+    infix-prec: 100
+  - pattern: "-="
+    infix-prec: 100
+  - pattern: "\\+"
+    infix-prec: 50
+  - pattern: "-"
+    infix-prec: 50
+  - pattern: "\\*"
+    infix-prec: 30
+  - pattern: "/"
+    infix-prec: 30

@@ -18,7 +18,7 @@ Usage:
 Run the test runner from the command line by providing the YAML test data file
 using the --tests option. For example:
 
-    python3 runtests.py --tests tests.yaml
+    python3 scripts/functest.py --tests tests.yaml
 
 Security:
 -----------

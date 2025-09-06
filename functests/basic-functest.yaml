@@ -1,0 +1,33 @@
+tests:
+
+  - name: "if EXPR fi"
+    command: "go run ./cmd/re-classify functests/config.yaml"
+    input: |
+      if
+      x
+      fi
+    expected_output: |
+      S fi
+      V
+      E
+
+  - name: "while x: do x -= 1 done"
+    command: "go run ./cmd/re-classify functests/config.yaml"
+    input: |
+      while 
+      x
+      : 
+      do 
+      x 
+      -= 
+      1 
+      done
+    expected_output: |
+      S done
+      V
+      U
+      L
+      V
+      O 0 100 0
+      U
+      E

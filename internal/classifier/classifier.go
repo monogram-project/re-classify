@@ -184,17 +184,24 @@ func (ce *ClassifierEngine) ClassifyToken(token string) string {
 	}
 
 	// Check operator using OperatorRegexpTable
-	// TODO: Fix type issue with OperatorRegexpTable
-	// if ce.config.OperatorRegexpTable != nil {
-	//     operatorTable := ce.config.OperatorRegexpTable
-	//     _, operatorConfig, ok := operatorTable.TryLookup(token)
-	//     if ok {
-	//         return fmt.Sprintf("O %d %d %d", operatorConfig.PrefixPrec, operatorConfig.InfixPrec, operatorConfig.PostfixPrec)
-	//     }
-	// }
+	if ce.config.OperatorRegexpTable != nil {
+		operatorTable := ce.config.OperatorRegexpTable
+		operatorConfig, _, ok := operatorTable.TryLookup(token)
+		if ok {
+			return fmt.Sprintf("O %d %d %d", operatorConfig.PrefixPrec, operatorConfig.InfixPrec, operatorConfig.PostfixPrec)
+		}
+	}
 
-	// Default to variable
-	return "V"
+	// Default to variable only if VariableRegexpTable exists and the token matches it.
+	if ce.config.VariableRegexpTable != nil {
+		_, _, ok := ce.config.VariableRegexpTable.TryLookup(token)
+		if ok {
+			return "V"
+		}
+	}
+
+	// Otherwise, it's unclassified per the specification
+	return "U"
 }
 
 // ProcessTokens processes all tokens and outputs classifications

@@ -31,7 +31,7 @@ test:
 
 # Functional tests
 functest:
-    poetry run python functest.py
+    poetry run python scripts/functest.py --tests functests/*-functest.yaml --check-on-path=`dirname "$(command -v go)"`
 
 # Clean build artifacts
 clean:

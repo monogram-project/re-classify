@@ -35,7 +35,7 @@ type ClassifierConfig struct {
 	FormPrefixRegexp    []string               `yaml:"form-prefix-regexp,omitempty"`
 	SimpleLabelRegexp   []string               `yaml:"simple-label-regexp,omitempty"`
 	CompoundLabelRegexp []string               `yaml:"compound-label-regexp,omitempty"`
-	VariableRegExp      []string               `yaml:"variable-regexp,omitempty"`
+	VariableRegexp      []string               `yaml:"variable-regexp,omitempty"`
 
 	// Operator configurations with precedence values
 	OperatorRegexp []OperatorConfig `yaml:"operator-regexp,omitempty"`
@@ -159,9 +159,9 @@ func (cc *ClassifierConfig) CompileRegexes() (*CompiledClassifierConfig, error) 
 	}
 
 	// Build variable-regexp table
-	if len(cc.VariableRegExp) > 0 {
+	if len(cc.VariableRegexp) > 0 {
 		builder := regexptable.NewRegexpTableBuilder[bool]()
-		for _, pattern := range cc.VariableRegExp {
+		for _, pattern := range cc.VariableRegexp {
 			if pattern != "" {
 				builder.AddPattern(pattern, true)
 			}
