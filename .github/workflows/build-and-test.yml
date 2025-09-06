@@ -25,9 +25,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
-          ${{ runner.os }}-go-
+          ${{ runner.os }}-go-${{ matrix.go-version }}-
     
     - name: Download dependencies
       run: go mod download
@@ -57,30 +57,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y python3 python3-venv python3-pip
 
-    - name: Install Poetry (via pipx)
+    - name: Install uv
       run: |
-        # Install pipx into user if missing (no-op if present)
-        python3 -m pip install --user pipx || true
-        python3 -m pipx ensurepath || true
-
-        # Locate pipx binary (system, /opt, or user-local)
-        pipx_bin="$(command -v pipx || true)"
-        if [ -z "$pipx_bin" ] && [ -x "$HOME/.local/bin/pipx" ]; then
-          pipx_bin="$HOME/.local/bin/pipx"
-        fi
-        if [ -z "$pipx_bin" ] && [ -x "/opt/pipx_bin/pipx" ]; then
-          pipx_bin="/opt/pipx_bin/pipx"
-        fi
-        if [ -z "$pipx_bin" ]; then
-          echo "pipx not found; aborting"
-          exit 1
-        fi
-
-        # Expose pipx's bin directory to the rest of the job
-        echo "$(dirname "$pipx_bin")" >> $GITHUB_PATH
-
-        # Install poetry using the discovered pipx
-        "$pipx_bin" install poetry || "$pipx_bin" reinstall poetry
+        curl -LsSf https://astral.sh/uv/install.sh | sh
 
     - name: Install Python dependencies
       run: poetry install --no-root
