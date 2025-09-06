@@ -9,9 +9,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      JUST_VERSION: '1.40'
     strategy:
       matrix:
-        go-version: ['1.21', '1.22', '1.23']
+        go-version: ['1.21', '1.22', '1.23', '1.24', '1.25']
     
     steps:
     - uses: actions/checkout@v4
@@ -82,15 +84,31 @@ jobs:
         # Install poetry using the discovered pipx
         "$pipx_bin" install poetry || "$pipx_bin" reinstall poetry
 
-    - name: Install just (prebuilt)
+    - name: Install just (hardcoded)
       run: |
-        mkdir -p $HOME/.local/bin
-        JUST_URL=$(curl -s https://api.github.com/repos/casey/just/releases/latest | grep browser_download_url | grep linux | grep amd64 | cut -d '"' -f 4)
-        curl -fsSL "$JUST_URL" -o /tmp/just.tar.gz
-        tar -xzf /tmp/just.tar.gz -C /tmp
-        mv /tmp/just ~/.local/bin/just
-        chmod +x ~/.local/bin/just
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        if command -v just >/dev/null 2>&1; then
+          echo "just already installed at $(command -v just); skipping install"
+        else
+          mkdir -p "$HOME/.local/bin"
+          ARCH="x86_64"
+          TARBALL="just-${JUST_VERSION}-${ARCH}-unknown-linux-gnu.tar.gz"
+          URL="https://github.com/casey/just/releases/download/${JUST_VERSION}/${TARBALL}"
+
+          echo "Downloading $URL"
+          curl -fsSL "$URL" -o /tmp/just.tar.gz
+          tar -xzf /tmp/just.tar.gz -C /tmp
+
+          # Find the extracted 'just' executable and move it to local bin
+          JUST_BIN=$(find /tmp -maxdepth 3 -type f -name just -perm /111 | head -n1)
+          if [ -z "$JUST_BIN" ]; then
+            echo "ERROR: could not find 'just' in the downloaded archive"
+            exit 1
+          fi
+
+          mv "$JUST_BIN" "$HOME/.local/bin/just"
+          chmod +x "$HOME/.local/bin/just"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        fi
 
     - name: Run functional tests
       run: just functest
