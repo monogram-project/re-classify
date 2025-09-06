@@ -59,12 +59,28 @@ jobs:
 
     - name: Install Poetry (via pipx)
       run: |
-        python3 -m pip install --user pipx
+        # Install pipx into user if missing (no-op if present)
+        python3 -m pip install --user pipx || true
         python3 -m pipx ensurepath || true
-        # Ensure local bin is available in PATH for remaining steps
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-        # Install poetry using pipx (user-scoped, isolated)
-        $HOME/.local/bin/pipx install poetry || $HOME/.local/bin/pipx reinstall poetry
+
+        # Locate pipx binary (system, /opt, or user-local)
+        pipx_bin="$(command -v pipx || true)"
+        if [ -z "$pipx_bin" ] && [ -x "$HOME/.local/bin/pipx" ]; then
+          pipx_bin="$HOME/.local/bin/pipx"
+        fi
+        if [ -z "$pipx_bin" ] && [ -x "/opt/pipx_bin/pipx" ]; then
+          pipx_bin="/opt/pipx_bin/pipx"
+        fi
+        if [ -z "$pipx_bin" ]; then
+          echo "pipx not found; aborting"
+          exit 1
+        fi
+
+        # Expose pipx's bin directory to the rest of the job
+        echo "$(dirname "$pipx_bin")" >> $GITHUB_PATH
+
+        # Install poetry using the discovered pipx
+        "$pipx_bin" install poetry || "$pipx_bin" reinstall poetry
 
     - name: Install just (prebuilt)
       run: |
