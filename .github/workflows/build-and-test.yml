@@ -51,6 +51,33 @@ jobs:
     
     - name: Build
       run: go build -v ./cmd/re-classify
+
+    - name: Install Python3 and pip
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3 python3-venv python3-pip
+
+    - name: Install Poetry (via pipx)
+      run: |
+        python3 -m pip install --user pipx
+        python3 -m pipx ensurepath || true
+        # Ensure local bin is available in PATH for remaining steps
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        # Install poetry using pipx (user-scoped, isolated)
+        $HOME/.local/bin/pipx install poetry || $HOME/.local/bin/pipx reinstall poetry
+
+    - name: Install just (prebuilt)
+      run: |
+        mkdir -p $HOME/.local/bin
+        JUST_URL=$(curl -s https://api.github.com/repos/casey/just/releases/latest | grep browser_download_url | grep linux | grep amd64 | cut -d '"' -f 4)
+        curl -fsSL "$JUST_URL" -o /tmp/just.tar.gz
+        tar -xzf /tmp/just.tar.gz -C /tmp
+        mv /tmp/just ~/.local/bin/just
+        chmod +x ~/.local/bin/just
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Run functional tests
+      run: just functest
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
