@@ -39,13 +39,12 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+    formats:
+      - tar.gz
+      - zip
     format_overrides:
       - goos: windows
         format: zip
-      - goos: linux
-        format: tar.gz
-      - goos: darwin
-        format: tar.gz
     files:
       - README.md
       - LICENSE*
