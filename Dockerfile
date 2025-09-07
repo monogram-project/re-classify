@@ -34,3 +34,4 @@ RUN adduser -D -s /bin/sh appuser
 USER appuser
 
 ENTRYPOINT ["./re-classify"]
+
