@@ -45,7 +45,7 @@ archives:
         format: zip
     files:
       - README.md
-      - LICENSE
+      - LICENSE*
 
 checksum:
   name_template: 'checksums.txt'
@@ -97,5 +97,3 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
-    extra_files:
-      - functests/configs/
