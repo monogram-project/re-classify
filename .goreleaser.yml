@@ -32,8 +32,7 @@ builds:
       - -trimpath
 
 archives:
-  - format: tar.gz
-    name_template: >-
+  - name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
@@ -43,6 +42,10 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+      - goos: linux
+        format: tar.gz
+      - goos: darwin
+        format: tar.gz
     files:
       - README.md
       - LICENSE*
@@ -81,6 +84,6 @@ release:
     Docker images are available on GitHub Container Registry:
     
     ```bash
-    docker pull ghcr.io/sfkleach/re-classify:{{.Tag}}
-    docker pull ghcr.io/sfkleach/re-classify:latest
+    docker pull ghcr.io/monogram-project/re-classify:{{.Tag}}
+    docker pull ghcr.io/monogram-project/re-classify:latest
     ```
