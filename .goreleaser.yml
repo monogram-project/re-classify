@@ -84,16 +84,3 @@ release:
     docker pull ghcr.io/sfkleach/re-classify:{{.Tag}}
     docker pull ghcr.io/sfkleach/re-classify:latest
     ```
-
-dockers:
-  - image_templates:
-      - "ghcr.io/sfkleach/re-classify:{{ .Tag }}"
-      - "ghcr.io/sfkleach/re-classify:latest"
-    dockerfile: Dockerfile
-    build_flag_templates:
-      - "--pull"
-      - "--label=org.opencontainers.image.created={{.Date}}"
-      - "--label=org.opencontainers.image.title={{.ProjectName}}"
-      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-      - "--label=org.opencontainers.image.version={{.Version}}"
-      - "--label=org.opencontainers.image.source={{.GitURL}}"
