@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  test:
+  unittest:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -17,13 +17,19 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23'
+        go-version: '1.25'
     
-    - name: Run tests
+    - name: Run unit tests
       run: go test ./...
 
+  functest:
+    uses: ./.github/workflows/functest.yml
+    with:
+      go-version: '1.25'
+      os: 'ubuntu-latest'
+
   release:
-    needs: test
+    needs: [unittest, functest]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -33,7 +39,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.23'
+        go-version: '1.25'
     
     - name: Cache Go modules
       uses: actions/cache@v4

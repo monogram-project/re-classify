@@ -44,34 +44,22 @@ jobs:
     
     - name: Build
       run: go build -v ./cmd/re-classify
-
-    - name: Install Python3 and pip
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y python3 python3-venv python3-pip
-
-    - name: Install uv
-      run: |
-        curl -LsSf https://astral.sh/uv/install.sh | sh
-
-    - name: Install just
-      run: |
-        if command -v just >/dev/null 2>&1; then
-          echo "just already installed at $(command -v just); skipping install"
-        else
-          mkdir -p "$HOME/.local/bin"
-          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to "$HOME/.local/bin"
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-        fi
-
-    - name: Run functional tests
-      run: just functest
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
         file: ./coverage.out
         fail_ci_if_error: false
+
+  functest:
+    needs: test
+    strategy:
+      matrix:
+        go-version: ['1.23', '1.24', '1.25']
+    uses: ./.github/workflows/functest.yml
+    with:
+      go-version: ${{ matrix.go-version }}
+      os: 'ubuntu-latest'
 
   lint:
     runs-on: ubuntu-latest

@@ -1,4 +1,6 @@
 # GoReleaser configuration
+version: 2
+
 project_name: re-classify
 
 before:
@@ -44,13 +46,13 @@ archives:
     files:
       - README.md
       - LICENSE*
-      - test-configs/*
+      - functests/configs/*
 
 checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 
 changelog:
   sort: asc
@@ -97,4 +99,4 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
       - "--label=org.opencontainers.image.source={{.GitURL}}"
     extra_files:
-      - test-configs/
+      - functests/configs/
