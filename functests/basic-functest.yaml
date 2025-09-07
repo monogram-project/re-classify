@@ -34,6 +34,8 @@ tests:
 
   - name: "$0 pattern substitution"
     command: "go run ./cmd/re-classify functests/endings-config.yaml"
+    # Even though there is no `while` in the input, while_end is still detected
+    # via the implicit generation of `end:` patterns.
     input: |
       if
       endif
@@ -41,4 +43,43 @@ tests:
     expected_output: |
       S endif if_end
       E
+      E
+
+  - name: Implicit endings from end patterns
+    command: "go run ./cmd/re-classify functests/end-config.yaml"
+    input: |
+      if
+      fi
+      done
+    expected_output: |
+      S fi
+      E
+      E
+  - name: Implicit endings from end patterns, cannot detect endings when end not present.
+    command: "go run ./cmd/re-classify functests/end-config.yaml"
+    input: |
+      if
+      fi
+      while
+    expected_output: |
+      S fi
+      E
+      S
+
+
+  - name: "Compound endings with substitution"
+    command: "go run ./cmd/re-classify functests/bad-compound-endings-config.yaml"
+    expected_exit_status: 1 
+
+  - name: "Compound endings with substitution"
+    command: "go run ./cmd/re-classify functests/good-compound-endings-config.yaml"
+    input: |
+      abc_DEF
+      DEF_abc
+      xyz_ABC
+      PQR_xyz
+    expected_output: |
+      S DEF_abc
+      E
+      S ABC_xyz
       E

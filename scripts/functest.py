@@ -20,15 +20,6 @@ using the --tests option. For example:
 
     python3 scripts/functest.py --tests tests.yaml
 
-Security:
------------
-To avoid inadvertent execution of arbitrary binaries, this script checks that
-the first token in the provided command resolves to an executable located within
-a permitted directory. Use the --check-on-path option to specify the required
-base directory for allowed executables. For example:
-
-    `python3 runtests.py --tests tests.yaml --check-on-path /path/to/allowed/directory`
-
 Normalization:
 -----------
 Normalization functions (such as for XML or JSON) can be specified either
@@ -122,44 +113,6 @@ normalization_functions = {
     # If an unrecognized value (or "none") is provided, no normalization is done.
 }
 
-def is_command_valid(command, base_path=None):
-    """
-    Check that the command (specifically, the first token—the executable)
-    resolves to a path that lies inside the provided base_path.
-    If base_path is None then the current working directory is used.
-
-    Returns (True, "") if valid, otherwise (False, error_message).
-    """
-    tokens = shlex.split(command)
-    if not tokens:
-        return False, "Empty command."
-
-    executable = tokens[0]
-    resolved = None
-
-    if os.path.isabs(executable):
-        resolved = os.path.realpath(executable)
-    else:
-        resolved = shutil.which(executable)
-        if resolved:
-            resolved = os.path.realpath(resolved)
-
-    if not resolved:
-        return False, f"Could not resolve executable: {executable}"
-    
-    # Check if resolved path is under base_path
-    if base_path is None:
-        base_path = os.getcwd()
-    base_path = os.path.realpath(base_path)
-    try:
-        common = os.path.commonpath([resolved, base_path])
-        if common != base_path:
-            return False, f"Executable {resolved} is not under allowed path {base_path}"
-    except ValueError:
-        return False, f"Executable {resolved} is not under allowed path {base_path}"
-
-    return True, ""
-
 class Main:
 
     def __init__(self):
@@ -174,11 +127,6 @@ class Main:
             help="One or more YAML files containing test data"
         )
         parser.add_argument(
-            "--check-on-path",
-            help="Path under which the command's executable must reside. "
-                 "If not provided, the current working directory is used."
-        )
-        parser.add_argument(
             "--command",
             default="monogram",
             help="Path to the executable to test."
@@ -190,12 +138,11 @@ class Main:
         )
         self.args = parser.parse_args()
 
-    def run_test(self, tcount, test, default_normalize=None, check_path=None):
+    def run_test(self, tcount, test, default_normalize=None):
         """
         Execute a single test case.
         The normalization setting is determined first by a test-specific flag
-        and then falls back to the default. The check_path parameter specifies
-        the allowed directory for the command's executable.
+        and then falls back to the default.
         """
         name = test.get("name", "<unnamed>")
         command = test["command"].format(command=Main().args.command).format(count=tcount)
@@ -205,10 +152,6 @@ class Main:
 
         norm_key = test.get("normalize", default_normalize)
         normalization_func = normalization_functions.get(norm_key, None)
-
-        valid, err_msg = is_command_valid(command, base_path=check_path)
-        if not valid:
-            return (name, False, f"COMMAND ERROR: {err_msg}", expected_output, "")
 
         result = subprocess.run(
             command,
@@ -239,8 +182,7 @@ class Main:
         name, passed, actual, expected, stderr_text = self.run_test(
             tcount,
             test,
-            default_normalize=default_normalize,
-            check_path=self.args.check_on_path
+            default_normalize=default_normalize
         )
         if passed:
             if not self.args.quiet:

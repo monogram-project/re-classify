@@ -1,0 +1,10 @@
+# Example configuration file for re-classify tool
+# This shows the new surround-regexp configuration and operator settings
+
+# New surround regex patterns with substitution
+surround-regexp:
+  - start: while|for
+    end: done
+
+  - start: if
+    end: fi

@@ -31,8 +31,7 @@ test:
 
 # Functional tests
 functest:
-    uv run python scripts/functest.py --tests functests/*-functest.yaml --check-on-path=`dirname "$(command -v go)"`
-
+    uv run python scripts/functest.py --tests functests/*-functest.yaml
 # Clean build artifacts
 clean:
     go clean

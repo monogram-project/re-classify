@@ -1,0 +1,5 @@
+surround-regexp:
+  - start: ([a-z]+)_([A-Z]+)
+    endings: 
+      - $2_$1
+    end: ([A-Z]+)_([a-z]+)
