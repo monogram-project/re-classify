@@ -45,9 +45,6 @@ import sys
 import difflib
 import yaml
 import json
-import os
-import shlex
-import shutil
 from pathlib import Path
 from lxml import etree
 

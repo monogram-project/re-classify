@@ -3,6 +3,7 @@ package classifier
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/sfkleach/re-classify/internal/config"
@@ -167,6 +168,7 @@ func (ce *ClassifierEngine) ClassifyToken(token string) string {
 				endTokens = append(endTokens, endToken)
 			}
 			if len(endTokens) > 0 {
+				sort.Strings(endTokens) // Only required for consistent testable output.
 				return "S " + strings.Join(endTokens, " ")
 			}
 			return "S"
