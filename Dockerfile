@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.23-alpine AS builder
+FROM docker.io/golang:1.25-alpine AS builder
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o re-classify ./cmd/re-classify
 
 # Final stage
-FROM alpine:latest
+FROM docker.io/alpine:latest
 
 # Install ca-certificates for HTTPS requests
 RUN apk --no-cache add ca-certificates
@@ -28,9 +28,6 @@ WORKDIR /root/
 
 # Copy the binary from builder stage
 COPY --from=builder /app/re-classify .
-
-# Copy test configs for examples
-COPY --from=builder /app/test-configs ./test-configs
 
 # Create a non-root user
 RUN adduser -D -s /bin/sh appuser
