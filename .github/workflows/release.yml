@@ -53,12 +53,25 @@ jobs:
         args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload Linux binary for Docker
+      uses: actions/upload-artifact@v4
+      with:
+        name: re-classify-binary
+        path: dist/re-classify_linux_amd64_v1/re-classify
+        retention-days: 1
 
   docker:
     needs: [release]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Download binary artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: re-classify-binary
+        path: .
     
     - name: Extract tag name
       id: extract_tag
@@ -71,19 +84,9 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Extract metadata
-      id: meta
-      uses: docker/metadata-action@v5
-      with:
-        images: ghcr.io/${{ github.repository }}
-        tags: |
-          type=ref,event=tag
-          type=raw,value=latest
-    
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.tag }} .
+        docker build -t ghcr.io/${{ github.repository }}:latest .
+        docker push ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.tag }}
+        docker push ghcr.io/${{ github.repository }}:latest
