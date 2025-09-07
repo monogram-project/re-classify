@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
   unittest:
@@ -41,14 +42,6 @@ jobs:
       with:
         go-version: '1.25'
     
-    - name: Cache Go modules
-      uses: actions/cache@v4
-      with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-    
     - name: Download dependencies
       run: go mod download
     
@@ -60,3 +53,40 @@ jobs:
         args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload Linux binary for Docker
+      uses: actions/upload-artifact@v4
+      with:
+        name: re-classify-binary
+        path: dist/re-classify_linux_amd64_v1/re-classify
+        retention-days: 1
+
+  docker:
+    needs: [release]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download binary artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: re-classify-binary
+        path: .
+    
+    - name: Extract tag name
+      id: extract_tag
+      run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Build and push Docker image
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.tag }} .
+        docker build -t ghcr.io/${{ github.repository }}:latest .
+        docker push ghcr.io/${{ github.repository }}:${{ steps.extract_tag.outputs.tag }}
+        docker push ghcr.io/${{ github.repository }}:latest
