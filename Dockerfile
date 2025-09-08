@@ -10,6 +10,9 @@ WORKDIR /root/
 # Copy the pre-built binary (provided by GoReleaser)
 COPY re-classify .
 
+# Set execute permissions on the binary
+RUN chmod +x re-classify
+
 # Create a non-root user
 RUN adduser -D -s /bin/sh appuser
 USER appuser
