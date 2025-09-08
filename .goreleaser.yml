@@ -77,6 +77,6 @@ release:
     Docker images are available on GitHub Container Registry:
     
     ```bash
-    docker pull ghcr.io/monogram-project/re-classify:{{.Tag}}
-    docker pull ghcr.io/monogram-project/re-classify:latest
+    docker pull docker.io/monogram-project/re-classify:{{.Tag}}
+    docker pull docker.io/monogram-project/re-classify:latest
     ```
