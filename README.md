@@ -35,10 +35,10 @@ just install
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/monogram-project/re-classify:latest
+docker pull sfkleach/re-classify:latest
 
 # Run with a config file
-docker run --rm -i ghcr.io/monogram-project/re-classify:latest ./test-configs/example-config.yaml < input.txt
+docker run --rm -i sfkleach/re-classify:latest ./test-configs/example-config.yaml < input.txt
 ```
 
 ## Building
