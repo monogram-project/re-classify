@@ -97,8 +97,9 @@ configuration file. For details on the configuration file format, see
 re-classify [OPTIONS] FILE < STDIN > STDOUT
 ```
 
-The supported options are `--help` and `--check`. The `--check` option
-verifies the syntax of the configuration file and exits.
+The supported options are `--version` and `--check`. The `--version` option is
+self-explanatory. The `--check` option verifies the syntax of the configuration
+file and exits.
 
 
 ## Classification Protocol
