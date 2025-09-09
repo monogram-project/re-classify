@@ -1,9 +1,0 @@
-# Test configuration with `end` patterns and empty endings
-
-surround-regexp:
-  - start: "if|while"
-    end: "end.*"
-    # Note: no endings field, so it will use the reverse map
-  - start: "function"
-    end: "end"
-    # Note: no endings field, so it will use the reverse map
