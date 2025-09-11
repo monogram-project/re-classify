@@ -18,6 +18,7 @@ func main() {
 	// Define command-line flags
 	checkOnly := flag.Bool("check", false, "Validate configuration syntax only (don't process input)")
 	version := flag.Bool("version", false, "Show version information")
+	echoToStderr := flag.Bool("echo-to-stderr", false, "Echo classification strings to stderr in addition to stdout")
 
 	// Customize usage message
 	flag.Usage = func() {
@@ -96,5 +97,5 @@ func main() {
 	}
 
 	// Process tokens and output classifications
-	engine.ProcessTokens(tokens)
+	engine.ProcessTokens(tokens, *echoToStderr)
 }

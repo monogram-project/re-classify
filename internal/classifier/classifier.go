@@ -2,6 +2,7 @@ package classifier
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -231,9 +232,12 @@ func (ce *ClassifierEngine) ClassifyToken(token string) string {
 }
 
 // ProcessTokens processes all tokens and outputs classifications
-func (ce *ClassifierEngine) ProcessTokens(tokens []string) {
+func (ce *ClassifierEngine) ProcessTokens(tokens []string, echoToStderr bool) {
 	for _, token := range tokens {
 		classification := ce.ClassifyToken(token)
 		fmt.Println(classification)
+		if echoToStderr {
+			fmt.Fprintln(os.Stderr, classification)
+		}
 	}
 }
