@@ -29,6 +29,24 @@ type OperatorConfig struct {
 	EndTokens   []string `yaml:"end-tokens,omitempty"` // For form-start tokens
 }
 
+type BracketRegexpConfig struct {
+	Start   string   `yaml:"start"`
+	Endings []string `yaml:"endings"`
+	Infix   bool     `yaml:"infix,omitempty"`  // Whether this bracket can appear infix
+	Outfix  bool     `yaml:"outfix,omitempty"` // Whether this bracket can appear outfix
+}
+
+func (b *BracketRegexpConfig) GetCode() string {
+	code := 0
+	if b.Infix {
+		code += 1
+	}
+	if b.Outfix {
+		code += 2
+	}
+	return fmt.Sprintf("%d", code)
+}
+
 // ClassifierConfig represents the configuration structure for the re-classify tool
 type ClassifierConfig struct {
 	SurroundRegexp      []SurroundRegexpConfig `yaml:"surround-regexp,omitempty"`
@@ -36,6 +54,7 @@ type ClassifierConfig struct {
 	SimpleLabelRegexp   []string               `yaml:"simple-label-regexp,omitempty"`
 	CompoundLabelRegexp []string               `yaml:"compound-label-regexp,omitempty"`
 	VariableRegexp      []string               `yaml:"variable-regexp,omitempty"`
+	BracketRegexp       []BracketRegexpConfig  `yaml:"bracket-regexp,omitempty"`
 
 	// Operator configurations with precedence values
 	OperatorRegexp []OperatorConfig `yaml:"operator-regexp,omitempty"`
@@ -58,6 +77,9 @@ type CompiledClassifierConfig struct {
 	// New efficient start token recognizer - maps start patterns to start token info
 	StartTokenTable *regexptable.RegexpTable[*StartTokenInfo] // For quick lookup of serial number and end substitutions
 	EndTokenTable   *regexptable.RegexpTable[bool]            // For quick lookup of end tokens mapping to serial numbers
+
+	OpenBracketTokenTable *regexptable.RegexpTable[*BracketRegexpConfig]
+	CloseBracketSetAsMap  map[string]bool
 
 	// All patterns now use RegexpTables for performance
 	FormPrefixRegexpTable    *regexptable.RegexpTable[bool]
@@ -191,6 +213,25 @@ func (cc *ClassifierConfig) CompileRegexes() (*CompiledClassifierConfig, error) 
 		compiled.OperatorRegexpTable, err = builder.Build(true, true)
 		if err != nil {
 			return nil, fmt.Errorf("failed to build operator-regexp table: %w", err)
+		}
+	}
+
+	if len(cc.BracketRegexp) > 0 {
+		openBuilder := regexptable.NewRegexpTableBuilder[*BracketRegexpConfig]()
+		compiled.CloseBracketSetAsMap = make(map[string]bool)
+		for i, bracketConfig := range cc.BracketRegexp {
+			if bracketConfig.Start != "" {
+				openBuilder.AddPattern(bracketConfig.Start, &bracketConfig)
+				for _, ending := range bracketConfig.Endings {
+					compiled.CloseBracketSetAsMap[ending] = true
+				}
+			} else {
+				return nil, fmt.Errorf("bracket-regexp start pattern %d is empty", i)
+			}
+		}
+		compiled.OpenBracketTokenTable, err = openBuilder.Build(true, true)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build opening bracket table: %w", err)
 		}
 	}
 

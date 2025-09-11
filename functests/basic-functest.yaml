@@ -83,3 +83,12 @@ tests:
       E
       S ABC_xyz
       E
+
+  - name: "Classify brackets"
+    command: "go run ./cmd/re-classify functests/simple-config.yaml"
+    input: |
+      {
+      }
+    expected_output: |
+      1 }
+      D

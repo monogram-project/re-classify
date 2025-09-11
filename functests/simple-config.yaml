@@ -10,6 +10,11 @@ simple-label-regexp:
 variable-regexp: 
   - "[a-zA-Z_][\\w_]*"
 
+bracket-regexp:
+  - start: "\\{"
+    endings: ["}"]
+    infix: true
+
 operator-regexp:
   - pattern: "="
     infix-prec: 100

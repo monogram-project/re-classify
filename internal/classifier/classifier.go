@@ -202,6 +202,30 @@ func (ce *ClassifierEngine) ClassifyToken(token string) string {
 		}
 	}
 
+	if ce.config.OpenBracketTokenTable != nil {
+		bracketConfig, captureGroups, ok := ce.config.OpenBracketTokenTable.TryLookup(token)
+		if ok {
+			code := bracketConfig.GetCode()
+			endTokens := make([]string, 0, len(bracketConfig.Endings))
+			for _, endPattern := range bracketConfig.Endings {
+				endToken := config.SubstitutePattern(endPattern, captureGroups)
+				endTokens = append(endTokens, endToken)
+			}
+			sort.Strings(endTokens) // Only required for consistent testable output.
+			var sb strings.Builder
+			sb.WriteString(code)
+			for _, token := range endTokens {
+				sb.WriteString(" ")
+				sb.WriteString(token)
+			}
+			return sb.String()
+		}
+	}
+
+	if ce.config.CloseBracketSetAsMap != nil && ce.config.CloseBracketSetAsMap[token] {
+		return "D"
+	}
+
 	// Otherwise, it's unclassified per the specification
 	return "U"
 }
