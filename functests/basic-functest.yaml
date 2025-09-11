@@ -90,5 +90,5 @@ tests:
       {
       }
     expected_output: |
-      1 }
-      D
+      [ 1 }
+      ]

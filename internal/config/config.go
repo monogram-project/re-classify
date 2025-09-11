@@ -44,7 +44,7 @@ func (b *BracketRegexpConfig) GetCode() string {
 	if b.Outfix {
 		code += 2
 	}
-	return fmt.Sprintf("%d", code)
+	return fmt.Sprintf("[ %d", code)
 }
 
 // ClassifierConfig represents the configuration structure for the re-classify tool

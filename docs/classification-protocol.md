@@ -14,8 +14,8 @@ For each token, the tool outputs a line starting with a single-character code:
 - `L` - Label token (identifiers used as labels)
 - `P` - Prefix token (operators that come before their operand)
 - `O` - Operator token (infix, postfix operators)
-- `1`, `2`, `3` - Open delimiter i.e. bracket/brace/parenthesis
-- `D` - Close delimiter i.e. bracket/brace/parenthesis
+- `[` - Open delimiter i.e. bracket/brace/parenthesis
+- `]` - Close delimiter i.e. bracket/brace/parenthesis
 - `V` - Variable token (identifiers used as variables)
 - `U` - Unclassified (continue with the initially assigned role)
 
@@ -27,13 +27,13 @@ Form-start tokens and operator tokens are followed by additional information:
   precedences. Note that 0 indicates that they don't have that role.
   e.g. `O 5 15 0` means an operator which can be used in prefix and
   infix roles but not postfix roles.
-- Opening delimiters are followed by the possible matching end tokens. In
-  addition the choice of `1`, `2` and `3` indicates if they are infix-only,
+- Opening delimiters are followed by a flag the possible matching end tokens. 
+  The flag is either `1`, `2` or `3` and indicates if they are infix-only,
   outfix-only or both, respectively. See the table below.
 
 ### Delimiter table
 
-| Symbol | Infix allowed | Outfix allowed |
+| Flag   | Infix allowed | Outfix allowed |
 |--------|---------------|----------------|
 | `1`    | `f[x]`        | no             |
 | `2`    | no            | `{ a := b }`   |

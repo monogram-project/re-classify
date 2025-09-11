@@ -224,7 +224,7 @@ func (ce *ClassifierEngine) ClassifyToken(token string) string {
 	}
 
 	if ce.config.CloseBracketSetAsMap != nil && ce.config.CloseBracketSetAsMap[token] {
-		return "D"
+		return "]"
 	}
 
 	// Otherwise, it's unclassified per the specification

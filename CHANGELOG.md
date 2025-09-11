@@ -2,7 +2,7 @@
 
 Following the style in https://keepachangelog.com/en/1.0.0/
 
-## v0.2.0, Bracket handling 
+## v0.2.1, Bracket handling 
 
 ### Added
 
