@@ -127,29 +127,31 @@ operator-regexp:
     postfix-prec: 75
 ```
 
-### 6. Bracket Patterns (`bracket-regexp`)
+### 6. Bracket Patterns (`bracket-pairs`)
 
-Bracket patterns define opening delimiters and their matching closing delimiters. The configuration includes flags to specify whether the brackets can be used in infix or outfix contexts:
+Bracket patterns define opening delimiters and their matching closing
+delimiters. The configuration includes flags to specify whether the brackets can
+be used in infix or outfix contexts:
 
 ```yaml
 bracket-regexp:
-  - start: "\\("
-    endings: ["\\)"]
+  - open: "("
+    close: ")"
     infix: true
     outfix: true
-  - start: "\\["
-    endings: ["\\]"]
+  - open: "["
+    close: "]"
     infix: true
     outfix: false
-  - start: "\\{"
-    endings: ["\\}"]
+  - open: "{"
+    close: "}"
     infix: false
     outfix: true
 ```
 
 The fields are:
-- `start`: Regular expression matching the opening bracket
-- `endings`: List of possible closing bracket patterns (does NOT support $0 substitution)
+- `open`: The opening bracket
+- `close`: The matching close bracket
 - `infix`: Boolean indicating if the bracket can be used in infix position (e.g., `f[x]`, `f(x)`)
 - `outfix`: Boolean indicating if the bracket can be used in outfix position (e.g., `(a, b)`, `{a := b}`)
 
